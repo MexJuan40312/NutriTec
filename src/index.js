@@ -11,12 +11,10 @@ app.use(express.json());
 app.use(cors());
 app.use(morgan('dev'));
 
-// Importar rutas
-const userRoutes = require('./routes/user.routes');
-app.use('/api/users', userRoutes);
+// Rutas unificadas
+const routes = require('./routes'); // importa index.js automáticamente
+app.use('/api', routes);
 
-const authRoutes = require('./routes/auth.routes');
-app.use('/api/auth', authRoutes);
 
 // Levantar servidor
 app.listen(port, () => {
