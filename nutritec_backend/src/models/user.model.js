@@ -15,6 +15,8 @@ const User = {
     createUserWithVerification: async (name, email, password, verificationToken, isVerified) => {
         try {
             const hashedPassword = await bcrypt.hash(password, 10);
+            console.log('Contraseña plana (en modelo):', password); // <--- LOG AQUÍ
+            console.log('Contraseña hasheada (en modelo):', hashedPassword); // <--- LOG AQUÍ
             const [result] = await db.execute('INSERT INTO users (name, email, password, verification_token, is_verified) VALUES (?, ?, ?, ?, ?)', [name, email, hashedPassword, verificationToken, isVerified]);
             return result;
         } catch (err) {

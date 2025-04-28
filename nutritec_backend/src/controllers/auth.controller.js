@@ -1,9 +1,8 @@
 const User = require('../models/user.model');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const crypto = require('crypto'); // Importa el módulo crypto para generar tokens
-const { sendVerificationEmail } = require('../utils/email'); // Asegúrate de que la ruta al archivo email.js sea correcta
-const db = require('../config/database'); // Importa tu conexión a la base de datos
+const crypto = require('crypto');
+const { sendVerificationEmail } = require('../utils/email');
 
 exports.register = async (req, res) => {
     const { name, email, password } = req.body;
@@ -13,26 +12,30 @@ exports.register = async (req, res) => {
     }
 
     try {
-        const existingUser = await User.findUserByEmailPromise(email);
+        const existingUser = await User.findUserByEmail(email);
         if (existingUser) {
             return res.status(400).json({ error: 'El email ya está registrado' });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(password, 10); // Hashea la contraseña PLANA aquí
         const verificationToken = crypto.randomUUID();
 
-        await User.createUserWithVerification(name, email, hashedPassword, verificationToken, false);
-
+        // Pasa la contraseña PLANA (original) a createUserWithVerification
+        await User.createUserWithVerification(name, email, password, verificationToken, false);
         await sendVerificationEmail(email, verificationToken);
 
         res.status(201).json({ message: 'Usuario registrado. Revisa tu correo para activar la cuenta.' });
 
     } catch (error) {
         console.error('Error durante el registro:', error);
-        return res.status(500).json({ error: 'Error al registrar usuario' });
+
+        if (error.code === 'ER_DUP_ENTRY') {
+            return res.status(409).json({ error: 'Este correo ya está registrado' });
+        }
+
+        return res.status(500).json({ error: 'Error interno del servidor. Intenta más tarde.' });
     }
 };
-
 exports.login = async (req, res) => {
     const { email, password } = req.body;
 
@@ -42,10 +45,17 @@ exports.login = async (req, res) => {
 
     try {
         const user = await User.findUserByEmail(email);
-        if (!user || !user.is_verified) {
-            return res.status(401).json({ error: 'Credenciales incorrectas o cuenta no verificada' });
+        if (!user) {
+            return res.status(401).json({ error: 'Cuenta no encontrada' });
         }
 
+        if (!user.is_verified) {
+            return res.status(401).json({ error: 'Cuenta no verificada' });
+        }
+
+        // Mueve las líneas de depuración y la comparación aquí
+        console.log('Contraseña ingresada:', password);
+        console.log('Contraseña hasheada de la DB:', user.password);
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(401).json({ error: 'Credenciales incorrectas' });

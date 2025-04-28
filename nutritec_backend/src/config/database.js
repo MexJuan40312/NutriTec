@@ -7,8 +7,8 @@ const pool = mysql.createPool({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   waitForConnections: true,
-  connectionLimit: 10, // Ajusta este número según tu necesidad
+  connectionLimit: 10, 
   queueLimit: 0
 });
 
-module.exports = pool.promise(); // Exporta la versión de promesa del pool
+module.exports = pool.promise();

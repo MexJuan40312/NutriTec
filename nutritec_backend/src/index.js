@@ -15,7 +15,7 @@ app.use(morgan('dev'));
 const routes = require('./routes'); 
 app.use('/api', routes);
 
-// Permite solo desde tu frontend
+// Conexión del FrontEnd
 app.use(cors({
   origin: 'http://localhost:3000', 
   credentials: true

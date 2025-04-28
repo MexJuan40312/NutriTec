@@ -7,6 +7,6 @@ const profileRoutes = require('./profile.routes');
 
 router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
-router.use('/profile', profileRoutes); // <-- agregamos esta línea
+router.use('/profile', profileRoutes); 
 
 module.exports = router;
