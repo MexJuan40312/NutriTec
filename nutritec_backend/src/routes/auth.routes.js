@@ -1,7 +1,8 @@
+// backend/routes/auth.routes.js
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/auth.controller');
-const db = require('../config/database');
+const db = require('../config/database'); // Asegúrate de que esta ruta sea correcta
 
 // Rutas de autenticación
 router.post('/register', authController.register);
@@ -16,17 +17,24 @@ router.get('/verify', async (req, res) => {
     try {
         const [rows] = await db.execute('SELECT * FROM users WHERE verification_token = ?', [token]);
 
+        // Si el token no existe o no se encuentra el usuario
         if (rows.length === 0) {
-            return res.status(400).json({ message: 'Token inválido o expirado' });
+            const frontendBaseUrl = process.env.FRONTEND_PUBLIC_URL || 'http://localhost:3000';
+            return res.redirect(`${frontendBaseUrl}/auth/login?error=invalid_token`);
         }
 
+        // Marcar usuario como verificado y limpiar token
         await db.execute('UPDATE users SET is_verified = 1, verification_token = NULL WHERE id = ?', [rows[0].id]);
 
-        res.redirect('http://localhost:3000/auth/login?verified=true');
+        // Redirige al login del frontend con un mensaje de éxito
+        const frontendBaseUrl = process.env.FRONTEND_PUBLIC_URL || 'http://localhost:3000';
+        res.redirect(`${frontendBaseUrl}/auth/login?verified=true`);
 
     } catch (error) {
         console.error('Error al verificar la cuenta:', error);
-        return res.status(500).json({ message: 'Error al verificar la cuenta' });
+        // En caso de error, redirige al login con un mensaje de error genérico
+        const frontendBaseUrl = process.env.FRONTEND_PUBLIC_URL || 'http://localhost:3000';
+        return res.redirect(`${frontendBaseUrl}/auth/login?error=verification_failed`);
     }
 });
 
