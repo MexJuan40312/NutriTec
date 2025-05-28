@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { AuthContext } from './authContext';
+import { decode } from 'punycode';
 
 interface AuthProviderProps {
     children: React.ReactNode;
@@ -18,7 +19,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             localStorage.setItem('authToken', newToken);
             try {
                 const decodedUser = JSON.parse(atob(newToken.split('.')[1]));
-                setUserState(decodedUser);
+                setUserState({
+                    ...decodedUser, 
+                    name: decodedUser.name || decodedUser.username || 'Usuario'
+                });
             } catch (error) {
                 console.error("Error al decodificar el token:", error);
             }
@@ -38,16 +42,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             setTokenState(storedToken);
             try {
                 const decodedUser = JSON.parse(atob(storedToken.split('.')[1]));
-                setUserState(decodedUser);
+                setUserState({
+                    ...decodedUser,
+                    name: decodedUser.name || decodedUser.username || 'Usuario'
+                });
             } catch (error) {
                 console.error("Error al decodificar el token:", error);
             }
         }
-        setIsLoading(false); // <- IMPORTANTE: después de cargar
+        setIsLoading(false);
     }, []);
 
     return (
-        <AuthContext.Provider value={{ token, setToken, user, setUser, isLoading, setIsLoading }}>
+        <AuthContext.Provider value={{ token, user, isLoading, setToken, setUser, setIsLoading }}>
             {children}
         </AuthContext.Provider>
     );

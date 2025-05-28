@@ -8,7 +8,7 @@ import frutasLogin from "@/app/assets/images/tazon_frutas.png";
 import { loginUser } from "@/app/utils/api";
 import { useRouter, useSearchParams } from "next/navigation";
 import ErrorAlert from "@/app/components/forms/ErrorAlert";
-import { useAuth } from "@/app/auth/authContext"; // Importa el hook useAuth
+import { useAuth } from "@/app/auth/authContext";
 
 export default function LoginForm() {
     const [form, setForm] = useState({ email: "", password: "" });
@@ -149,6 +149,15 @@ export default function LoginForm() {
                         <a href="../auth/register" className="text-emerald-600 font-medium hover:text-emerald-700 transition-colors">
                             Regístrate
                         </a>
+                    </p>
+                    
+                    <p className="text-center text-sm text-gray-600 mt-4">
+                    <a 
+                        href="/auth/forgot-password" 
+                        className="text-emerald-600 font-medium hover:text-emerald-700"
+                    >
+                        ¿Olvidaste tu contraseña?
+                    </a>
                     </p>
                 </form>
             </motion.div>

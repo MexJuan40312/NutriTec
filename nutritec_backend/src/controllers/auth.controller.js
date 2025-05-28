@@ -2,7 +2,7 @@ const User = require('../models/user.model');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
-const { sendVerificationEmail } = require('../utils/email');
+const { sendVerificationEmail, sendPasswordResetEmail } = require('../utils/email'); // Importar sendPasswordResetEmail
 
 exports.register = async (req, res) => {
     const { name, email, password } = req.body;
@@ -36,6 +36,7 @@ exports.register = async (req, res) => {
         return res.status(500).json({ error: 'Error interno del servidor. Intenta más tarde.' });
     }
 };
+
 exports.login = async (req, res) => {
     const { email, password } = req.body;
 
@@ -70,5 +71,61 @@ exports.login = async (req, res) => {
     } catch (error) {
         console.error('Error durante el login:', error);
         return res.status(500).json({ error: 'Error en el servidor' });
+    }
+};
+
+// --- NUEVAS FUNCIONES PARA RECUPERACIÓN DE CONTRASEÑA ---
+
+exports.forgotPassword = async (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).json({ error: 'El email es obligatorio' });
+    }
+
+    try {
+        const user = await User.findUserByEmail(email);
+        if (!user) {
+            return res.status(200).json({ message: 'Si el correo electrónico está registrado, recibirás un enlace para restablecer tu contraseña.' });
+        }
+
+        // Generar token y fecha de expiración (1 hora)
+        const resetToken = crypto.randomBytes(32).toString('hex');
+        const expiresAt = new Date(Date.now() + 3600000); // 1 hora en milisegundos
+
+        await User.updatePasswordResetToken(user.id, resetToken, expiresAt);
+        await sendPasswordResetEmail(user.email, resetToken);
+
+        res.status(200).json({ message: 'Si el correo electrónico está registrado, recibirás un enlace para restablecer tu contraseña.' });
+
+    } catch (error) {
+        console.error('Error durante la solicitud de recuperación de contraseña:', error);
+        return res.status(500).json({ error: 'Error interno del servidor. Intenta más tarde.' });
+    }
+};
+
+exports.resetPassword = async (req, res) => {
+    const { token, newPassword } = req.body;
+
+    if (!token || !newPassword) {
+        return res.status(400).json({ error: 'El token y la nueva contraseña son obligatorios' });
+    }
+
+    try {
+        const user = await User.findUserByPasswordResetToken(token);
+        if (!user) {
+            return res.status(400).json({ error: 'Token inválido o expirado' });
+        }
+        
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        console.log('Nueva contraseña hasheada al restablecer:', hashedPassword); // Añade este log
+        
+        await User.updateUserPassword(user.id, hashedPassword);
+
+        res.status(200).json({ message: 'Contraseña actualizada correctamente.' });
+
+    } catch (error) {
+        console.error('Error al restablecer la contraseña:', error);
+        return res.status(500).json({ error: 'Error interno del servidor. Intenta más tarde.' });
     }
 };

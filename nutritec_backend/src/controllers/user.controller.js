@@ -9,7 +9,7 @@ exports.getUsers = async (req, res) => {
   }
 };
 
-// NUEVO: obtener el perfil del usuario autenticado
+// Obtener el perfil del usuario autenticado
 exports.getProfile = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -19,7 +19,7 @@ exports.getProfile = async (req, res) => {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
 
-    const { password, verification_token, ...userData } = user; // Ocultamos campos sensibles
+    const { password, verification_token, ...userData } = user; 
     res.json({ profile: userData });
   } catch (err) {
     res.status(500).json({ error: 'Error al obtener el perfil' });

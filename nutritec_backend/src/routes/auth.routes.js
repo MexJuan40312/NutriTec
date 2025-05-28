@@ -3,9 +3,11 @@ const router = express.Router();
 const authController = require('../controllers/auth.controller');
 const db = require('../config/database');
 
-// Registro y login
+// Rutas de autenticación
 router.post('/register', authController.register);
 router.post('/login', authController.login);
+router.post('/forgot-password', authController.forgotPassword);
+router.post('/reset-password', authController.resetPassword);
 
 // Verificación de cuenta por token
 router.get('/verify', async (req, res) => {

@@ -1,4 +1,3 @@
-// nutritec_frontend/app/utils/api.ts
 export const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function registerUser(data: {
@@ -47,4 +46,33 @@ export async function getProfile(token: string) {
     throw new Error(result.error || "Error al obtener el perfil del usuario");
   }
   return result.profile; // Ajusta esto según la respuesta de tu backend
+}
+
+// Contenido generado por Deepseek:
+export async function requestPasswordReset(email: string) {
+  const res = await fetch(`${API_URL}/auth/forgot-password`, {  // Agrega /api
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
+
+  const result = await res.json();
+  if (!res.ok) {
+    throw new Error(result.error || "Error al solicitar recuperación");
+  }
+  return result;
+}
+
+export async function resetPassword(data: { token: string; newPassword: string }) {
+  const res = await fetch(`${API_URL}/auth/reset-password`, {  // Agrega /api
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+
+  const result = await res.json();
+  if (!res.ok) {
+    throw new Error(result.error || "Error al actualizar la contraseña");
+  }
+  return result;
 }
