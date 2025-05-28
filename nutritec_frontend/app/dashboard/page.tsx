@@ -6,12 +6,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useDashboardLogic } from "@/app/components/dashboard/useDashboardLogic";
 import { Smile, Sparkles, Lightbulb, ChevronRight } from "lucide-react";
 
-interface DashboardPageProps {
-  userDisplayName?: string;
-}
-
-export default function DashboardPage({ userDisplayName = "Usuario" }: DashboardPageProps) {
+export default function DashboardPage() {
   const { isChecking, isValidToken } = useProtectedRoute();
+  
+  // Se usa "Usuario" como valor predeterminado
   const {
     displayName,
     typedText,
@@ -19,9 +17,8 @@ export default function DashboardPage({ userDisplayName = "Usuario" }: Dashboard
     typingRef,
     sections,
     loading
-  } = useDashboardLogic(userDisplayName);
+  } = useDashboardLogic("Usuario");
 
-  // Estados de carga combinados
   const isLoading = isChecking || loading;
 
   if (isLoading) {
@@ -69,7 +66,7 @@ export default function DashboardPage({ userDisplayName = "Usuario" }: Dashboard
           </div>
         </motion.div>
 
-        {/* Secciones de la aplicación */}
+        {/* Secciones */}
         <AnimatePresence>
           {isTypingComplete && (
             <motion.div
@@ -137,11 +134,7 @@ export default function DashboardPage({ userDisplayName = "Usuario" }: Dashboard
 
                       <div className="mt-6 flex justify-center sm:justify-end">
                         <button
-                          className={`bg-gradient-to-r ${section.gradient} dark:${
-                            section.darkGradient
-                          } text-white px-4 sm:px-5 py-2 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex items-center font-medium w-full sm:w-auto explore-button ${
-                            section.subSections.length > 0 ? "justify-center" : "justify-center sm:justify-between"
-                          }`}
+                          className={`bg-gradient-to-r ${section.gradient} dark:${section.darkGradient} text-white px-4 sm:px-5 py-2 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex items-center font-medium w-full sm:w-auto explore-button`}
                         >
                           <span>Explorar</span>
                           <ChevronRight className="ml-2 h-5 w-5" />
