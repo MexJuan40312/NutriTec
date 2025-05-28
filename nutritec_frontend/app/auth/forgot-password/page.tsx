@@ -1,4 +1,5 @@
-// En app/auth/forgot-password/page.tsx
+"use client";
+
 import ForgotPasswordForm from "@/app/components/forms/ForgotPasswordForm";
 
 export default function ForgotPasswordPage() {
