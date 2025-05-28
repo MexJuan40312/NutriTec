@@ -1,3 +1,4 @@
+// api.ts
 export const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function registerUser(data: {
@@ -5,7 +6,7 @@ export async function registerUser(data: {
   email: string;
   password: string;
 }) {
-  const res = await fetch(`${API_URL}/auth/register`, {
+  const res = await fetch(`${API_URL}/api/auth/register`, { // Modificado: añadido /api
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
@@ -19,7 +20,7 @@ export async function registerUser(data: {
 }
 
 export async function loginUser(data: { email: string; password: string }) {
-  const res = await fetch(`${API_URL}/auth/login`, {
+  const res = await fetch(`${API_URL}/api/auth/login`, { // Modificado: añadido /api
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
@@ -34,7 +35,7 @@ export async function loginUser(data: { email: string; password: string }) {
 }
 
 export async function getProfile(token: string) {
-  const res = await fetch(`${API_URL}/users/profile`, {
+  const res = await fetch(`${API_URL}/api/profile`, { // Modificado: añadido /api. Nota: Tu backend tiene '/profile' en el root de 'routes', pero lo accede vía '/api/profile'
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
@@ -48,9 +49,9 @@ export async function getProfile(token: string) {
   return result.profile; // Ajusta esto según la respuesta de tu backend
 }
 
-// Contenido generado por Deepseek:
+// Contenido generado por Deepseek (Modificado):
 export async function requestPasswordReset(email: string) {
-  const res = await fetch(`${API_URL}/auth/forgot-password`, {  // Agrega /api
+  const res = await fetch(`${API_URL}/api/auth/forgot-password`, { // Modificado: añadido /api
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email }),
@@ -64,7 +65,7 @@ export async function requestPasswordReset(email: string) {
 }
 
 export async function resetPassword(data: { token: string; newPassword: string }) {
-  const res = await fetch(`${API_URL}/auth/reset-password`, {  // Agrega /api
+  const res = await fetch(`${API_URL}/api/auth/reset-password`, { // Modificado: añadido /api
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
