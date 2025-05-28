@@ -5,7 +5,9 @@ import { resetPassword } from "@/app/utils/api";
 import { Lock, CheckCircle } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import ErrorAlert from "@/app/components/forms/ErrorAlert";
-import { useRouter } from "next/navigation"; // Importar useRouter para la navegación
+import { useRouter } from "next/navigation"; 
+
+export const dynamic = 'force-dynamic';
 
 export default function ResetPasswordPage() {
   const searchParams = useSearchParams();
