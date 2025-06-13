@@ -56,6 +56,10 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: "Algo salió mal en el servidor", error: err.message });
 });
 
+// Ruta de prueba para la raíz
+app.get('/', (req, res) => {
+  res.status(200).json({ message: '¡El backend de Nutritec está funcionando!' });
+});
 
 // Levantar servidor
 app.listen(port, () => {

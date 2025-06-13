@@ -34,23 +34,23 @@ async function sendVerificationEmail(to, token) {
     });
 }
 
+
 async function sendPasswordResetEmail(to, token) {
-    // Si FRONTEND_PUBLIC_URL no está definida (ej. en desarrollo local), usará localhost:3000
-    const frontendBaseUrl = process.env.FRONTEND_PUBLIC_URL || 'http://localhost:3000';
-    const resetLink = `${frontendBaseUrl}/auth/reset-password?token=${token}`;
+    const resetLink = `http://localhost:3000/auth/reset-password?token=${token}`;
 
     await transporter.sendMail({
         from: process.env.EMAIL_FROM,
         to,
-        subject: 'Restablece tu contraseña de NutriTec',
+        subject: 'Restablece tu contraseña de Nutritec',
         html: `
             <h2>Restablecer contraseña</h2>
-            <p>Hemos recibido una solicitud para restablecer la contraseña de tu cuenta NutriTec.</p>
+            <p>Hemos recibido una solicitud para restablecer la contraseña de tu cuenta Nutritec.</p>
             <p>Haz clic en el siguiente enlace para establecer una nueva contraseña:</p>
             <p><a href="${resetLink}" style="display: inline-block; background-color: #007bff; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;">Restablecer contraseña</a></p>
             <p>Este enlace expirará en 1 hora.</p>
             <p>Si el botón de arriba no funciona, puedes copiar y pegar el siguiente enlace en tu navegador:</p>
             <p><a href="${resetLink}">${resetLink}</a></p>
+            <p>Si no solicitaste un restablecimiento de contraseña, ignora este correo.</p>
         `,
     });
 }
